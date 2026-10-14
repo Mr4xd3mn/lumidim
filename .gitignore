@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.env
+.venv/
+env/
+venv/
+
+# PyInstaller build artifacts
+build/
+*.spec
+
+# Keep dist or ignore? Standard python projects ignore dist/
+# Uncomment if you prefer not to commit the 32MB binary:
+# dist/
+
+# Operating system / IDE
+.vscode/
+.idea/
+Thumbs.db
+Desktop.ini
