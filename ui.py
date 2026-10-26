@@ -248,7 +248,8 @@ class ModernControlPanel:
             ("Bottom Half (Default)", "bottom_half"),
             ("Top Half", "top_half"),
             ("Bottom 1/3", "bottom_third"),
-            ("Full Screen", "full"),
+            ("Full Screen (Gradient)", "full"),
+            ("Full Screen (Uniform)", "full_uniform"),
         ]
 
         for idx, (label, key) in enumerate(preset_defs):

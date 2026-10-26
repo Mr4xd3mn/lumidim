@@ -5,7 +5,7 @@ import sys
 DEFAULT_CONFIG = {
     "enabled": True,
     "opacity": 0.45,
-    "preset": "bottom_half",  # "bottom_half", "top_half", "bottom_third", "full", "custom"
+    "preset": "bottom_half",  # "bottom_half", "top_half", "bottom_third", "full", "full_uniform", "custom"
     "split_ratio": 0.50,      # For bottom_half / top_half / custom split (fraction of screen height)
     "custom_rect": None,      # {"x": int, "y": int, "width": int, "height": int}
     "monitor_index": 0,       # 0 = primary, -1 = all monitors / virtual screen, >0 = monitor index

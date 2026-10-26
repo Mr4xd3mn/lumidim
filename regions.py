@@ -125,7 +125,7 @@ def calculate_overlay_geometry(
         y = by + (bh - h)
         return (bx, y, bw, h)
 
-    elif preset == "full":
+    elif preset in ("full", "full_uniform"):
         return (bx, by, bw, bh)
 
     elif preset == "custom":

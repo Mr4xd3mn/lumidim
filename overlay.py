@@ -111,7 +111,9 @@ def _generate_gradient_bytes_numpy(
 
     y_coords = np.arange(h, dtype=np.float32)
 
-    if direction == "top_to_bottom":
+    if direction == "uniform":
+        t = np.ones(h, dtype=np.float32)
+    elif direction == "top_to_bottom":
         # 0 at top edge (y=0), gradually darkening down to blend_h
         t = np.clip(y_coords / blend_h, 0.0, 1.0)
     else:
@@ -155,7 +157,9 @@ def _generate_gradient_bytes_fallback(
 
     row_bytes = bytearray()
     for y in range(h):
-        if direction == "top_to_bottom":
+        if direction == "uniform":
+            t = 1.0
+        elif direction == "top_to_bottom":
             t = min(1.0, max(0.0, y / blend_h))
         else:
             t = min(1.0, max(0.0, (h - 1 - y) / blend_h))
@@ -485,7 +489,7 @@ class ScreenDimmerOverlay:
             self._render_and_update()
 
     def set_direction(self, direction: str):
-        """Sets gradient direction: 'top_to_bottom' or 'bottom_to_top'."""
+        """Sets dimming direction: 'top_to_bottom', 'bottom_to_top', or 'uniform'."""
         self.direction = direction
         if self.hwnd and self._running and self.enabled:
             self._render_and_update()

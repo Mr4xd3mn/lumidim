@@ -113,7 +113,8 @@ class SystemTrayManager:
             ("Bottom Half (Default)", "bottom_half"),
             ("Top Half", "top_half"),
             ("Bottom Third", "bottom_third"),
-            ("Full Screen", "full"),
+            ("Full Screen (Gradient)", "full"),
+            ("Full Screen (Uniform)", "full_uniform"),
             ("Custom Selected", "custom"),
         ]
         preset_items = []
@@ -121,7 +122,7 @@ class SystemTrayManager:
             preset_items.append(
                 pystray.MenuItem(
                     label,
-                    lambda item, k=key: self.on_set_preset(k),
+                    lambda icon, item, *, preset=key: self.on_set_preset(preset),
                     checked=lambda item, k=key: current_preset == k
                 )
             )

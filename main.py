@@ -32,7 +32,7 @@ class LumiDimApp:
             custom_rect=self.config.custom_rect
         )
 
-        direction = "bottom_to_top" if self.config.preset == "top_half" else "top_to_bottom"
+        direction = self._direction_for_preset(self.config.preset)
 
         # 2. Initialize native Win32 gradient dimmer overlay
         self.overlay = ScreenDimmerOverlay(
@@ -93,6 +93,12 @@ class LumiDimApp:
             self.panel.show()
 
     # --- Event Handlers & Safe Thread Dispatches ---
+
+    @staticmethod
+    def _direction_for_preset(preset: str):
+        if preset == "full_uniform":
+            return "uniform"
+        return "bottom_to_top" if preset == "top_half" else "top_to_bottom"
 
     def _threadsafe_toggle_enabled(self):
         new_state = not self.config.enabled
@@ -156,7 +162,7 @@ class LumiDimApp:
     def handle_preset_change(self, preset: str, split_ratio: float):
         self.config.preset = preset
         self.config.split_ratio = split_ratio
-        direction = "bottom_to_top" if preset == "top_half" else "top_to_bottom"
+        direction = self._direction_for_preset(preset)
         self.overlay.set_direction(direction)
 
         x, y, w, h = calculate_overlay_geometry(

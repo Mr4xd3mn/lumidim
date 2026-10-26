@@ -8,6 +8,7 @@ Lightweight regional screen dimmer for Windows. Overlays a semi-transparent, cli
 
 - **Gradient dimming** — per-pixel vertical linear gradient via `UpdateLayeredWindow`. No hard edges.
 - **Regional control** — dim the bottom half, top half, bottom third, full screen, or a custom drag-selected rectangle.
+- **Uniform fullscreen dimming** — choose **Full Screen (Uniform)** in the control panel or tray's **Dimming Region** menu to dim every row equally, including the top edge. **Full Screen (Gradient)** keeps the existing fade. Opacity and tone apply to both modes; blend height only affects gradients. Your selected mode is saved between launches.
 - **Click-through** — built with `WS_EX_TRANSPARENT | WS_EX_LAYERED`. Input passes to whatever is underneath.
 - **Always-on-top** — background watchdog re-asserts z-order so fullscreen apps and games don't bury the overlay.
 - **Color tones** — Classic Black, Warm Amber (night light), or Cool Slate.
@@ -22,7 +23,7 @@ Lightweight regional screen dimmer for Windows. Overlays a semi-transparent, cli
 ## Quick Start
 
 **Executable (no Python needed):**
-Download `LumiDim-v1.0-Windows.exe` from the [Releases](https://github.com/Mr4xd3mn/lumidim/releases) page and run it.
+Download the [latest LumiDim.exe](https://github.com/Mr4xd3mn/lumidim/raw/refs/heads/main/dist/LumiDim.exe) and run it. Older versioned builds are available on the [Releases](https://github.com/Mr4xd3mn/lumidim/releases) page.
 
 **From source:**
 ```powershell
