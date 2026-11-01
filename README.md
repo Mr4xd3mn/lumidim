@@ -4,6 +4,10 @@ A screen dimmer for Windows. Dim part of your screen or the whole display, with 
 
 ---
 
+## Control panel
+
+![LumiDim control panel](assets/control-panel.png)
+
 ## Features
 
 - Dim the top half, bottom half, bottom third, full screen, or an area you select.
