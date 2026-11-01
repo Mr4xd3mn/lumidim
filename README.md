@@ -1,23 +1,21 @@
 # LumiDim
 
-Lightweight regional screen dimmer for Windows. Overlays a semi-transparent, click-through dimming filter on a configurable area of your screen using Win32 layered windows.
+A screen dimmer for Windows. Dim part of your screen or the whole display, with a smooth fade or an even filter. You can still click through to the windows underneath.
 
 ---
 
 ## Features
 
-- **Gradient dimming** — per-pixel vertical linear gradient via `UpdateLayeredWindow`. No hard edges.
-- **Regional control** — dim the bottom half, top half, bottom third, full screen, or a custom drag-selected rectangle.
-- **Uniform fullscreen dimming** — choose **Full Screen (Uniform)** in the control panel or tray's **Dimming Region** menu to dim every row equally, including the top edge. **Full Screen (Gradient)** keeps the existing fade. Opacity and tone apply to both modes; blend height only affects gradients. Your selected mode is saved between launches.
-- **Click-through** — built with `WS_EX_TRANSPARENT | WS_EX_LAYERED`. Input passes to whatever is underneath.
-- **Always-on-top** — background watchdog re-asserts z-order above desktop and borderless windows. Exclusive fullscreen bypasses desktop overlays.
-- **Borderless game shortcut** — choose Windowed in the game, focus its window, then press Ctrl+Alt+G to fill its monitor without borders. Press it again to restore the original window. Regional dimming and gradients remain available.
-- **Color tones** — Classic Black, Warm Amber (night light), or Cool Slate.
-- **System tray** — right-click for quick controls without opening the panel.
-- **Global hotkeys** — Ctrl+Alt+D (toggle), Ctrl+Alt+Up/Down (opacity), Ctrl+Alt+P (panel).
-- **Startup integration** — registers in `HKCU\Software\Microsoft\Windows\CurrentVersion\Run`.
-- **Multi-monitor** — per-monitor DPI V2 aware (`SetProcessDpiAwarenessContext`).
-- **No hardware changes** — pure software alpha blending, does not touch backlight, DDC/CI, or gamma.
+- Dim the top half, bottom half, bottom third, full screen, or an area you select.
+- Adjust opacity, fade height, and color tone.
+- Choose **Full Screen (Uniform)** to dim the top edge too, or **Full Screen (Gradient)** for a fade.
+- Control the dimmer from the panel, tray menu, or keyboard. Settings are saved between launches.
+- Select one monitor or span all displays.
+- Run at Windows startup, minimized to the tray.
+- Use Ctrl+Alt+G to make a windowed game borderless, then press it again to restore the window.
+- Dimming is a software filter; monitor brightness and gamma settings stay unchanged.
+
+Shortcuts: **Ctrl+Alt+D** toggles dimming, **Ctrl+Alt+Up/Down** adjusts opacity, and **Ctrl+Alt+P** opens or hides the panel.
 
 ---
 
@@ -41,11 +39,11 @@ pythonw main.py --minimized
 
 ## Games and fullscreen
 
-Use the game's **Borderless Windowed** mode for regional dimming. If it only offers Windowed and Fullscreen, choose **Windowed**, focus the game, then press **Ctrl+Alt+G**. LumiDim removes the window frame and fits it to the monitor without changing the game's rendering mode. Press the shortcut again, or exit LumiDim, to restore the original window. Global hotkeys must be enabled.
+Choose **Borderless Windowed** in the game's settings. If that option isn't available, choose **Windowed**, focus the game, and press **Ctrl+Alt+G**. Press it again to restore the window. Exiting LumiDim also restores windows changed with this shortcut.
 
-For **Minecraft Java**, press **F11** to leave fullscreen, then **Ctrl+Alt+G**. For Minecraft Bedrock, turn off Fullscreen in Video settings before using the shortcut. Existing dimming region, opacity, blend and tint settings still apply. Display size changes are detected automatically.
+Your region, opacity, fade, and tint settings still apply. LumiDim also adjusts when the display resolution changes. The shortcut requires global hotkeys to be enabled.
 
-True exclusive fullscreen is not supported by a desktop layered window: the game owns the display output. LumiDim cannot force regional filters into every DirectX, OpenGL or Vulkan game. Games that reject external window resizing or use protected/elevated windows may also reject the shortcut; use their built-in borderless option instead.
+Exclusive fullscreen isn't supported. Some games also block window resizing; use their own borderless option in that case.
 
 ---
 
