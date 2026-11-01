@@ -195,8 +195,8 @@ class ScreenDimmerOverlay:
     """
     Native Win32 click-through, always-on-top, regional software dimming overlay
     with smooth linear gradient blending to eliminate any harsh borders or lines.
-    Floats persistently above all windows, games, and system elements without
-    intercepting mouse clicks or stealing focus.
+    Floats above desktop and borderless windows without intercepting mouse
+    clicks or stealing focus. Exclusive fullscreen bypasses desktop overlays.
     """
     _class_registered = False
     _class_name = "LumiDimRegionalGradientOverlayWindow"
@@ -529,6 +529,15 @@ class ScreenDimmerOverlay:
                 0, 0, 0, 0,
                 SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_SHOWWINDOW
             )
+
+    def refresh_display(self):
+        with self._lock:
+            if not self.hwnd or not self._running:
+                return
+            self._init_gdi_buffers(self.width, self.height)
+            if self.enabled:
+                self._render_and_update()
+                self.force_topmost()
 
     def destroy(self):
         """Gracefully destroys the overlay window and terminates threads."""

@@ -10,7 +10,8 @@ Lightweight regional screen dimmer for Windows. Overlays a semi-transparent, cli
 - **Regional control** — dim the bottom half, top half, bottom third, full screen, or a custom drag-selected rectangle.
 - **Uniform fullscreen dimming** — choose **Full Screen (Uniform)** in the control panel or tray's **Dimming Region** menu to dim every row equally, including the top edge. **Full Screen (Gradient)** keeps the existing fade. Opacity and tone apply to both modes; blend height only affects gradients. Your selected mode is saved between launches.
 - **Click-through** — built with `WS_EX_TRANSPARENT | WS_EX_LAYERED`. Input passes to whatever is underneath.
-- **Always-on-top** — background watchdog re-asserts z-order so fullscreen apps and games don't bury the overlay.
+- **Always-on-top** — background watchdog re-asserts z-order above desktop and borderless windows. Exclusive fullscreen bypasses desktop overlays.
+- **Borderless game shortcut** — choose Windowed in the game, focus its window, then press Ctrl+Alt+G to fill its monitor without borders. Press it again to restore the original window. Regional dimming and gradients remain available.
 - **Color tones** — Classic Black, Warm Amber (night light), or Cool Slate.
 - **System tray** — right-click for quick controls without opening the panel.
 - **Global hotkeys** — Ctrl+Alt+D (toggle), Ctrl+Alt+Up/Down (opacity), Ctrl+Alt+P (panel).
@@ -38,6 +39,16 @@ pythonw main.py --minimized
 
 ---
 
+## Games and fullscreen
+
+Use the game's **Borderless Windowed** mode for regional dimming. If it only offers Windowed and Fullscreen, choose **Windowed**, focus the game, then press **Ctrl+Alt+G**. LumiDim removes the window frame and fits it to the monitor without changing the game's rendering mode. Press the shortcut again, or exit LumiDim, to restore the original window. Global hotkeys must be enabled.
+
+For **Minecraft Java**, press **F11** to leave fullscreen, then **Ctrl+Alt+G**. For Minecraft Bedrock, turn off Fullscreen in Video settings before using the shortcut. Existing dimming region, opacity, blend and tint settings still apply. Display size changes are detected automatically.
+
+True exclusive fullscreen is not supported by a desktop layered window: the game owns the display output. LumiDim cannot force regional filters into every DirectX, OpenGL or Vulkan game. Games that reject external window resizing or use protected/elevated windows may also reject the shortcut; use their built-in borderless option instead.
+
+---
+
 ## Project Structure
 
 ```
@@ -49,6 +60,7 @@ lumidim/
 ├── regions.py        # Monitor geometry, DPI awareness, region presets
 ├── region_picker.py  # Interactive screen region selector
 ├── hotkeys.py        # Win32 RegisterHotKey listener
+├── game_window.py    # Reversible borderless window support
 ├── autostart.py      # Registry startup integration
 ├── config.py         # JSON settings persistence
 └── requirements.txt

@@ -5,13 +5,14 @@ import ctypes
 from ctypes import wintypes
 
 from config import Config
-from regions import calculate_overlay_geometry
+from regions import calculate_overlay_geometry, get_monitors
 from overlay import ScreenDimmerOverlay
 from autostart import is_autostart_enabled, set_autostart
 from hotkeys import GlobalHotkeysManager
 from tray import SystemTrayManager
 from ui import ModernControlPanel
 from region_picker import RegionPickerWindow
+from game_window import GameWindowManager
 
 # Single instance enforcement via Windows Named Mutex
 kernel32 = ctypes.windll.kernel32
@@ -23,6 +24,8 @@ class LumiDimApp:
         self.config = Config()
         self.start_minimized = start_minimized
         self.picker_window = None
+        self.game_windows = GameWindowManager()
+        self._display_job = None
 
         # 1. Calculate initial geometry
         x, y, w, h = calculate_overlay_geometry(
@@ -81,7 +84,8 @@ class LumiDimApp:
             on_toggle=lambda: self.panel.root.after(0, self._threadsafe_toggle_enabled),
             on_increase_opacity=lambda: self.panel.root.after(0, self._threadsafe_adjust_opacity, 0.05),
             on_decrease_opacity=lambda: self.panel.root.after(0, self._threadsafe_adjust_opacity, -0.05),
-            on_toggle_panel=lambda: self.panel.root.after(0, self.panel.toggle_visibility)
+            on_toggle_panel=lambda: self.panel.root.after(0, self.panel.toggle_visibility),
+            on_toggle_game_mode=lambda: self.panel.root.after(0, self.handle_toggle_game_mode)
         )
         if self.config.hotkeys_enabled:
             self.hotkeys.start()
@@ -91,8 +95,36 @@ class LumiDimApp:
             self.panel.hide()
         else:
             self.panel.show()
+        self._display_signature = self._get_display_signature()
+        self._display_job = self.panel.root.after(1000, self._check_display_changes)
 
     # --- Event Handlers & Safe Thread Dispatches ---
+
+    @staticmethod
+    def _get_display_signature():
+        return tuple((monitor['name'], monitor['x'], monitor['y'], monitor['width'], monitor['height'])
+                     for monitor in get_monitors())
+
+    def _check_display_changes(self):
+        try:
+            signature = self._get_display_signature()
+            if signature != self._display_signature:
+                self.game_windows.refit()
+                self.handle_monitor_change(self.config.monitor_index)
+                self.overlay.refresh_display()
+                self._display_signature = signature
+        except Exception as error:
+            print(f"[Display] Could not refresh overlay: {error}")
+        finally:
+            self._display_job = self.panel.root.after(1000, self._check_display_changes)
+
+    def handle_toggle_game_mode(self):
+        try:
+            message = self.game_windows.toggle_foreground()
+            self.overlay.force_topmost()
+        except (OSError, RuntimeError) as error:
+            message = str(error)
+        self.tray.show_notification("LumiDim Gaming", message)
 
     @staticmethod
     def _direction_for_preset(preset: str):
@@ -212,6 +244,10 @@ class LumiDimApp:
         self.picker_window = RegionPickerWindow(on_selected=on_selected, on_cancelled=on_cancelled)
 
     def handle_exit(self):
+        if self._display_job is not None:
+            self.panel.root.after_cancel(self._display_job)
+            self._display_job = None
+        self.game_windows.restore_all()
         try:
             self.hotkeys.stop()
         except Exception:
@@ -231,7 +267,10 @@ class LumiDimApp:
         sys.exit(0)
 
     def run(self):
-        self.panel.root.mainloop()
+        try:
+            self.panel.root.mainloop()
+        finally:
+            self.game_windows.restore_all()
 
 def main():
     parser = argparse.ArgumentParser(description="LumiDim — Regional Screen Dimmer Overlay")

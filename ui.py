@@ -111,6 +111,8 @@ class ModernControlPanel:
 
         app_subtitle = tk.Label(title_box, text="Seamless Gradient Screen Dimmer", font=("Segoe UI", 9), fg="#94a3b8", bg="#0f172a")
         app_subtitle.pack(anchor="w")
+        tk.Label(title_box, text="Games: Windowed, then Ctrl+Alt+G. Minecraft: F11 first.",
+                 font=("Segoe UI", 8), fg="#94a3b8", bg="#0f172a").pack(anchor="w", pady=(3, 0))
 
         # Master Power Toggle Button
         self.power_btn = tk.Button(

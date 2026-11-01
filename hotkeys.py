@@ -20,6 +20,7 @@ VK_UP = 0x26
 VK_DOWN = 0x28
 VK_D = 0x44
 VK_P = 0x50
+VK_G = 0x47
 
 class GlobalHotkeysManager:
     """
@@ -33,13 +34,16 @@ class GlobalHotkeysManager:
                  on_toggle: Callable[[], None],
                  on_increase_opacity: Callable[[], None],
                  on_decrease_opacity: Callable[[], None],
-                 on_toggle_panel: Callable[[], None]):
+                 on_toggle_panel: Callable[[], None],
+                 on_toggle_game_mode: Callable[[], None] = None):
         self.callbacks = {
             1: on_toggle,
             2: on_increase_opacity,
             3: on_decrease_opacity,
             4: on_toggle_panel
         }
+        if on_toggle_game_mode is not None:
+            self.callbacks[5] = on_toggle_game_mode
         self._thread: threading.Thread = None
         self._thread_id: int = 0
         self._running = False
@@ -59,6 +63,8 @@ class GlobalHotkeysManager:
         user32.RegisterHotKey(None, 2, MOD_CONTROL | MOD_ALT | MOD_NOREPEAT, VK_UP)
         user32.RegisterHotKey(None, 3, MOD_CONTROL | MOD_ALT | MOD_NOREPEAT, VK_DOWN)
         user32.RegisterHotKey(None, 4, MOD_CONTROL | MOD_ALT | MOD_NOREPEAT, VK_P)
+        if 5 in self.callbacks:
+            user32.RegisterHotKey(None, 5, MOD_CONTROL | MOD_ALT | MOD_NOREPEAT, VK_G)
 
         msg = wintypes.MSG()
         while self._running:
@@ -77,8 +83,8 @@ class GlobalHotkeysManager:
             user32.DispatchMessageW(ctypes.byref(msg))
 
         # Unregister hotkeys
-        for i in range(1, 5):
-            user32.UnregisterHotKey(None, i)
+        for hotkey_id in self.callbacks:
+            user32.UnregisterHotKey(None, hotkey_id)
 
     def stop(self):
         self._running = False
